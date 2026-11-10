@@ -28,3 +28,24 @@ Components are the building blocks of UI in React.
 - Derive other values from existing State instead of storing duplicate data.
 
 **Reference:** [Thinking in React](https://react.dev/learn/thinking-in-react)
+
+## Micro-Frontend
+- An architectural style where independently deliverable frontend applications are composed into a greater whole
+- Decomposing frontend monoliths into smaller, simpler chunks that can be developed, tested and deployed independently, while still appearing to customers as a single cohesive product.
+
+### Costs:
+- can lead to duplication of dependencies, increasing the number of bytes our users must download.
+
+### Benefits:
+- Independent deployment
+![alt text](image.png)
+
+here is a micro frontend for each page in the application, and there is a single container application, which:
+
+    - renders common page elements such as headers and footers
+    - addresses cross-cutting concerns like authentication and navigation
+    - brings the various micro frontends together onto the page, and tells each micro frontend when and where to render itself
+
+![alt text](image-1.png)
+
+**Reference:** [Micro Frontends](https://martinfowler.com/articles/micro-frontends.html)
