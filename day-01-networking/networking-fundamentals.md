@@ -240,3 +240,4 @@ HTTP defines how clients send requests and servers return responses.
 - Uses TLS 1.3 for encryption.
 
 ---
+
