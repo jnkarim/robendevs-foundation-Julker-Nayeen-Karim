@@ -302,3 +302,218 @@ Access-Control-Allow-Origin: https://app.robendevs.com
 ### Why Does It Work in Postman?
 
 Postman does not enforce the browser's SOP/CORS restrictions. It sends the API request directly and does not block access to the response based on CORS headers.
+
+# Common Web Security Attacks
+
+Three common web security attacks:
+
+1. XSS (Cross-Site Scripting)
+2. CSRF (Cross-Site Request Forgery)
+3. MITM (Man-in-the-Middle)
+
+## 1. XSS (Cross-Site Scripting)
+
+**Definition:** An attack where an attacker injects malicious JavaScript into a website, which executes in other users' browsers.
+
+**Example:**
+
+- A blog allows users to post comments.
+- An attacker submits a malicious `<script>` instead of a normal comment.
+- If the website renders it as HTML without proper protection, the script executes in other visitors' browsers.
+
+**Possible Impact:**
+- Steal sensitive information.
+- Perform unauthorized actions.
+- Display fake login forms.
+- Modify website content.
+
+**Prevention:**
+- Escape user input when rendering.
+- Use Content Security Policy (CSP).
+- Use HttpOnly cookies to protect session cookies from JavaScript access.
+
+## 2. CSRF (Cross-Site Request Forgery)
+
+**Definition:** An attack where an attacker tricks a user's browser into sending an unauthorized request to a website where the user is already authenticated.
+
+**Banking Example:**
+
+1. A user logs into `bank.com`.
+2. The browser stores the authentication cookie.
+3. The user visits an attacker's website (`attacker.com`).
+4. The attacker's website tries to send a money transfer request to `bank.com`.
+5. If the browser automatically sends the authentication cookie and the bank lacks proper CSRF protection, the transfer may happen without the user's knowledge.
+
+**Important:** The attacker does not need to know the user's password. The attack exploits the existing authenticated session.
+
+**Prevention:**
+- Use SameSite cookies.
+- Use CSRF tokens.
+- Validate requests on the server.
+
+## 3. MITM (Man-in-the-Middle)
+
+**Definition:** An attack where an attacker intercepts or modifies communication between two parties, such as a browser and a server.
+
+**Example:**
+
+- A user connects to public Wi-Fi.
+- An attacker intercepts unprotected HTTP traffic.
+- The attacker may read or modify transmitted information.
+
+**Prevention:**
+- Use HTTPS (TLS encryption).
+- Enable HSTS to enforce HTTPS.
+- Use Secure cookies to prevent cookies from being sent over HTTP.
+
+
+## Remember
+
+- **XSS:** Attacker runs malicious JavaScript in your browser.
+- **CSRF:** Attacker tricks your browser into performing an action.
+- **MITM:** Attacker intercepts communication between you and the server.
+
+# Web Troubleshooting
+
+A web application request passes through multiple layers. If any layer fails, users may experience different errors.
+
+## 1. DNS_PROBE_FINISHED_NXDOMAIN
+
+**Layer:** DNS
+
+**Meaning:** The domain name cannot be resolved to an IP address.
+
+**Possible Causes:**
+- Incorrect domain name.
+- Missing or incorrect DNS records.
+
+**Debug:** 
+```bash
+dig robendevs.com
+```
+
+## 2. ERR_CONNECTION_TIMED_OUT
+
+**Layer:** TCP / Firewall
+
+**Meaning:** The browser cannot establish a connection within the allowed time.
+
+**Possible Causes:**
+- Server is down.
+- Firewall blocks the port.
+- Network connectivity issues.
+
+**Debug:**
+```bash
+nc -vz robendevs.com 443
+```
+
+## 3. Your Connection Is Not Private
+
+**Layer:** TLS / HTTPS
+
+**Meaning:** The browser cannot verify the server's SSL/TLS certificate.
+
+**Possible Causes:**
+- Expired certificate.
+- Domain mismatch.
+- Certificate trust or chain issues.
+
+**Debug:**
+```bash
+openssl s_client -connect robendevs.com:443 -servername robendevs.com
+```
+
+## 4. 502 Bad Gateway
+
+**Layer:** Reverse Proxy / Application Server
+
+**Meaning:** The proxy receives an invalid or unusable response from the upstream server.
+
+**Possible Causes:**
+- Application server is down.
+- Incorrect port configuration.
+- Application crash.
+
+**Debug:** Check application status, proxy configuration and server logs.
+
+## 5. 504 Gateway Timeout
+
+**Layer:** Application / Upstream Service
+
+**Meaning:** The upstream server does not respond within the allowed time.
+
+**Possible Causes:**
+- Slow database queries.
+- Slow external API.
+- Server overload.
+
+**Debug:** Check database queries, API response time and application logs.
+
+**502 vs 504:**
+- 502 → Invalid or unusable upstream response.
+- 504 → Upstream response timeout.
+
+## 6. Blocked by CORS Policy
+
+**Layer:** Browser Security
+
+**Meaning:** The browser blocks frontend access to a response because the server's CORS policy does not allow the origin.
+
+**Possible Causes:**
+- Missing CORS headers.
+- Incorrect allowed origin.
+
+**Fix:** Configure appropriate CORS headers on the backend.
+
+```js
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
+```
+
+**Remember:** CORS is enforced by browsers. Postman may work even when browser requests fail due to CORS.
+
+## 7. Users Still See the Old Version
+
+**Layer:** Caching
+
+**Meaning:** Browser or CDN serves an older cached version of the website.
+
+**Possible Causes:**
+- Old cached JavaScript or CSS files.
+- Incorrect cache configuration.
+
+**Fix:**
+- Configure `Cache-Control`.
+- Use versioned filenames (Cache Busting).
+
+## 8. Page Loads but Feels Frozen
+
+**Layer:** JavaScript / Rendering
+
+**Meaning:** The browser's main thread is busy, making the UI unresponsive.
+
+**Possible Causes:**
+- Heavy JavaScript execution.
+- Long-running synchronous tasks.
+
+**Debug:** Use Chrome DevTools → Performance.
+
+**Fix:**
+- Optimize JavaScript.
+- Break large tasks into smaller tasks.
+- Use Web Workers when appropriate.
+
+
+
+## Remember
+
+- DNS Error → Domain resolution problem.
+- Connection Timeout → Connection problem.
+- TLS Error → Certificate problem.
+- 502 → Invalid upstream response.
+- 504 → Upstream timeout.
+- CORS → Browser security restriction.
+- Old Version → Cache problem.
+- Frozen Page → Main thread problem.
