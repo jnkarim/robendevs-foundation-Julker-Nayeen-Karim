@@ -1,0 +1,33 @@
+services:
+  my-app:
+    build: .
+    ports:
+      - "3001:3000"
+    environment:
+      MONGO_DB_USERNAME: ${MONGO_ADMIN_USER}
+      MONGO_DB_PWD: ${MONGO_ADMIN_PASS}
+    volumes:
+      - ./app:/home/app
+      - /home/app/node_modules
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ADMIN_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ADMIN_PASS}
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://root:example@mongodb:27017/?authSource=admin"
+      ME_CONFIG_BASICAUTH_ENABLED: "true"
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_ADMIN_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_ADMIN_PASS}
+    depends_on:
+      - mongodb

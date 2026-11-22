@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker MongoDB App</title>
+
+    <style>
+        .container {
+            margin: 40px auto;
+            width: 80%;
+        }
+
+        hr {
+            width: 400px;
+            margin-left: 0;
+        }
+
+        h3 {
+            display: inline-block;
+        }
+
+        #static {
+            color: red;
+        }
+
+        #dynamic {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="container">
+
+        <h1>Welcome to this Super Sophisticated App</h1>
+
+        <span>Some static data: </span>
+        <h3 id="static">this is hard-coded in index.html</h3>
+
+        <hr />
+
+        <span>Data from MongoDB: </span>
+        <h3 id="dynamic">Loading...</h3>
+
+        <hr />
+
+    </div>
+
+    <script>
+        (async function init() {
+            try {
+                // Fetch data from Node.js backend
+                const response = await fetch('/fetch-data', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                // Convert response to JSON
+                const jsonResponse = await response.json();
+
+                // Display MongoDB data
+                document.getElementById('dynamic').textContent =
+                    jsonResponse.data ?? jsonResponse.name ?? 'No data found';
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+
+                document.getElementById('dynamic').textContent =
+                    'Error loading data';
+            }
+        })();
+    </script>
+
+</body>
+</html>
